@@ -664,6 +664,12 @@ require('lazy').setup({
             },
           },
         },
+        eslint = {
+          settings = {
+            workingDirectories = { mode = 'auto' },
+          },
+        },
+        prettierd = {},
         --
 
         lua_ls = {
@@ -695,6 +701,8 @@ require('lazy').setup({
       local ensure_installed = vim.tbl_keys(servers or {})
       vim.list_extend(ensure_installed, {
         'stylua', -- Used to format Lua code
+        'eslint',
+        'prettierd',
       })
       require('mason-tool-installer').setup { ensure_installed = ensure_installed }
 
@@ -727,30 +735,63 @@ require('lazy').setup({
         desc = 'Format buffer',
       },
     },
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
+    config = function()
+      -- https://github.com/stevearc/conform.nvim/issues/364#issuecomment-2308959873
+      local supported_prettierd = {
+        'css',
+        'graphql',
+        'handlebars',
+        'html',
+        'javascript',
+        'javascriptreact',
+        'json',
+        'jsonc',
+        'less',
+        'markdown',
+        'markdown.mdx',
+        'scss',
+        'typescript',
+        'typescriptreact',
+        'vue',
+        'yaml',
+      }
+
+      local formatters_by_ft = {
         lua = { 'stylua' },
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
         -- You can use 'stop_after_first' to run the first available formatter from the list
-        javascript = { 'prettierd', 'prettier', stop_after_first = true },
-        javascriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-        typescript = { 'prettierd', 'prettier', stop_after_first = true },
-        typescriptreact = { 'prettierd', 'prettier', stop_after_first = true },
-      },
-    },
+        -- javascript = { 'prettierd' },
+        -- javascriptreact = { 'prettierd' },
+        -- typescript = { 'prettierd' },
+        -- typescriptreact = { 'prettierd' },
+      }
+      for _, ft in ipairs(supported_prettierd) do
+        formatters_by_ft[ft] = { 'prettierd' }
+      end
+
+      require('conform').setup {
+        notify_on_error = false,
+        format_on_save = function(bufnr)
+          -- Disable "format_on_save lsp_fallback" for languages that don't
+          -- have a well standardized coding style. You can add additional
+          -- languages here or re-enable it for the disabled ones.
+          local disable_filetypes = { c = true, cpp = true }
+          return {
+            timeout_ms = 500,
+            lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+          }
+        end,
+        formatters_by_ft = formatters_by_ft,
+      }
+
+      vim.api.nvim_create_autocmd('BufWritePre', {
+        group = vim.api.nvim_create_augroup('EslintFixAll', { clear = true }),
+        pattern = { '*.tsx', '*.ts', '*.jsx', '*.js' },
+        command = 'silent! EslintFixAll',
+      })
+    end,
   },
 
   { -- Autocompletion
@@ -824,7 +865,7 @@ require('lazy').setup({
           -- Accept ([y]es) the completion.
           --  This will auto-import if your LSP supports it.
           --  This will expand snippets if the LSP sent a snippet.
-          ['<CR>'] = cmp.mapping.confirm { select = true },
+          ['<Tab>'] = cmp.mapping.confirm { select = true },
 
           -- If you prefer more traditional completion keymaps,
           -- you can uncomment the following lines
@@ -937,7 +978,7 @@ require('lazy').setup({
     main = 'nvim-treesitter.configs', -- Sets main module to use for opts
     -- [[ Configure Treesitter ]] See `:help nvim-treesitter`
     opts = {
-      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc' },
+      ensure_installed = { 'bash', 'c', 'diff', 'html', 'lua', 'luadoc', 'markdown', 'markdown_inline', 'query', 'vim', 'vimdoc', 'typescript' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
