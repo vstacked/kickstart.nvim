@@ -18,7 +18,13 @@ return {
       }
     end,
     init = function()
-      vim.cmd.colorscheme 'poimandres'
+      -- vim.cmd.colorscheme 'poimandres'
+      -- vim.o.termguicolors = true
+      -- vim.o.background = 'dark'
+      vim.cmd [[
+        silent! colorscheme poimandres
+        hi Normal guibg=#0f1017
+      ]]
     end,
   },
 }

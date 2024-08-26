@@ -1,7 +1,7 @@
 return {
   {
     'goolord/alpha-nvim',
-    dependencies = { 'echasnovski/mini.icons' },
+    dependencies = { 'nvim-web-devicons' },
     config = function()
       -- originally authored by @AdamWhittingham
 
@@ -20,7 +20,7 @@ return {
         highlight = true,
         -- available: devicons, mini, to use nvim-web-devicons or mini.icons
         -- if provider not loaded and enabled is true, it will try to use another provider
-        provider = 'mini',
+        provider = 'devicons',
       }
 
       local function icon(fn)

@@ -91,7 +91,7 @@ vim.g.mapleader = ' '
 vim.g.maplocalleader = ' '
 
 -- Set to true if you have a Nerd Font installed and selected in the terminal
-vim.g.have_nerd_font = false
+vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
@@ -161,26 +161,43 @@ vim.opt.scrolloff = 10
 --  See `:help vim.keymap.set()`
 
 -- vstacked
+vim.keymap.set('n', '<Tab>', '<cmd>bnext<cr>', { desc = 'Next Buffer' })
+vim.keymap.set('n', '<S-Tab>', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
+
+vim.keymap.set('n', 'u', '<Cmd>undo<CR>', { desc = 'Undo' })
+vim.keymap.set('n', 'U', '<Cmd>redo<CR>', { desc = 'Redo' })
 
 vim.keymap.set('n', '<Leader>e', '<Cmd>Oil<CR>', { desc = 'Oil' })
 
-vim.keymap.set('n', '<Leader>W', '<Cmd>wall<CR>', { desc = 'Save All' })
+vim.keymap.set('n', '<Leader>H', '<Cmd>Alpha<CR>', { desc = 'Home' })
 
-vim.keymap.set('n', '<Leader>cw', '<Cmd>:noautocmd w<CR>', { desc = 'Skip formatting on a single write' })
+vim.keymap.set('n', '<Leader>W', '<Cmd>:noautocmd wall<CR>', { desc = 'Save All' })
+
+-- vim.keymap.set('n', '<Leader>cw', '<Cmd>:noautocmd w<CR>', { desc = 'Skip formatting on a single write' })
 
 vim.keymap.set('n', '<Leader>Q', '<Cmd>qa<CR>', { desc = 'Quit All' })
 
+vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move Up' })
+vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move Down' })
+
 -- ThePrimeagen
 -- Paste without overwriting register and keep position
-vim.keymap.set('v', '<Leader>P', '"_dP', { desc = 'Paste w/o overwriting' })
+vim.keymap.set('x', '<Leader>P', [["_dP]], { desc = 'Paste w/o overwriting' })
 
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Esc' })
 
 vim.lsp.inlay_hint.enable(true)
 
 vim.wo.wrap = false
+vim.o.textwidth = 80
 
 vim.opt.fillchars = { eob = ' ' }
+
+local symbols = { Error = '󰅚 ', Info = '󰋽 ', Hint = '󰌶 ', Warn = '󰀪 ' }
+for name, icon in pairs(symbols) do
+  local hl = 'DiagnosticSign' .. name
+  vim.fn.sign_define(hl, { text = icon, numhl = hl, texthl = hl })
+end
 -- vstacked
 
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -188,7 +205,7 @@ vim.opt.fillchars = { eob = ' ' }
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
+vim.keymap.set('n', '<leader>xq', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -268,15 +285,6 @@ require('lazy').setup({
   -- See `:help gitsigns` to understand what the configuration keys do
   { -- Adds git related signs to the gutter, as well as utilities for managing changes
     'lewis6991/gitsigns.nvim',
-    opts = {
-      signs = {
-        add = { text = '+' },
-        change = { text = '~' },
-        delete = { text = '_' },
-        topdelete = { text = '‾' },
-        changedelete = { text = '~' },
-      },
-    },
   },
 
   -- NOTE: Plugins can also be configured to run Lua code when they are loaded.
@@ -339,15 +347,17 @@ require('lazy').setup({
 
       -- Document existing key chains
       require('which-key').add {
-        { '<leader>c', group = '[C]ode' },
-        { '<leader>d', group = '[D]ocument' },
-        { '<leader>r', group = '[R]ename' },
-        { '<leader>s', group = '[S]earch' },
-        { '<leader>w', group = '[W]orkspace' },
-        { '<leader>t', group = '[T]oggle' },
-        { '<leader>l', group = '[L]azyGit' },
-        { '<leader>Q', group = '[Q]uit All' },
-        { '<leader>h', group = 'Git [H]unk', mode = { 'n', 'v' } },
+        { '<leader>c', group = 'Code' },
+        { '<leader>s', group = 'Search' },
+        { '<leader>g', group = 'Git', mode = { 'n', 'v' } },
+        { '<leader>e', icon = { icon = '', color = 'azure' } },
+        { '<leader>H', icon = { icon = '', color = 'red' } },
+        { '<leader>m', icon = { icon = '', color = 'green' } },
+        { '<leader>W', icon = { icon = '󰽄', color = 'orange' } },
+        { '<leader>x', group = 'Trouble', icon = { icon = '', color = 'orange' } },
+        { '<leader>gh', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
+        { '<leader>gt', group = 'Toggle', icon = { icon = '󰨙', color = 'yellow' } },
+        { '<leader>p', group = 'Possession', icon = { icon = '󱑜', color = 'azure' } },
       }
     end,
   },
@@ -539,39 +549,38 @@ require('lazy').setup({
           -- Jump to the definition of the word under your cursor.
           --  This is where a variable was first declared, or where a function is defined, etc.
           --  To jump back, press <C-t>.
-          map('gd', require('telescope.builtin').lsp_definitions, '[G]oto [D]efinition')
+          map('gd', require('telescope.builtin').lsp_definitions, 'Goto Definition')
 
           -- Find references for the word under your cursor.
-          map('gr', require('telescope.builtin').lsp_references, '[G]oto [R]eferences')
+          map('gr', require('telescope.builtin').lsp_references, 'Goto References')
 
           -- Jump to the implementation of the word under your cursor.
           --  Useful when your language has ways of declaring types without an actual implementation.
-          map('gI', require('telescope.builtin').lsp_implementations, '[G]oto [I]mplementation')
-
+          map('gI', require('telescope.builtin').lsp_implementations, 'Goto Implementation')
           -- Jump to the type of the word under your cursor.
           --  Useful when you're not sure what type a variable is and you want to see
           --  the definition of its *type*, not where it was *defined*.
-          map('<leader>D', require('telescope.builtin').lsp_type_definitions, 'Type [D]efinition')
+          map('<leader>cD', require('telescope.builtin').lsp_type_definitions, 'Type Definition')
 
           -- Fuzzy find all the symbols in your current document.
           --  Symbols are things like variables, functions, types, etc.
-          map('<leader>ds', require('telescope.builtin').lsp_document_symbols, '[D]ocument [S]ymbols')
+          map('<leader>cd', require('telescope.builtin').lsp_document_symbols, 'Document Symbols')
 
           -- Fuzzy find all the symbols in your current workspace.
           --  Similar to document symbols, except searches over your entire project.
-          map('<leader>ws', require('telescope.builtin').lsp_dynamic_workspace_symbols, '[W]orkspace [S]ymbols')
+          map('<leader>cw', require('telescope.builtin').lsp_dynamic_workspace_symbols, 'Workspace Symbols')
 
           -- Rename the variable under your cursor.
           --  Most Language Servers support renaming across files, etc.
-          map('<leader>rn', vim.lsp.buf.rename, '[R]e[n]ame')
+          map('<leader>cr', vim.lsp.buf.rename, 'Rename')
 
           -- Execute a code action, usually your cursor needs to be on top of an error
           -- or a suggestion from your LSP for this to activate.
-          map('<leader>ca', vim.lsp.buf.code_action, '[C]ode [A]ction')
+          map('<leader>ca', vim.lsp.buf.code_action, 'Code Action')
 
           -- WARN: This is not Goto Definition, this is Goto Declaration.
           --  For example, in C this would take you to the header.
-          map('gD', vim.lsp.buf.declaration, '[G]oto [D]eclaration')
+          map('gD', vim.lsp.buf.declaration, 'Goto Declaration')
 
           -- The following two autocommands are used to highlight references of the
           -- word under your cursor when your cursor rests there for a little while.
@@ -609,7 +618,7 @@ require('lazy').setup({
           if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_inlayHint) then
             map('<leader>th', function()
               vim.lsp.inlay_hint.enable(not vim.lsp.inlay_hint.is_enabled { bufnr = event.buf })
-            end, '[T]oggle Inlay [H]ints')
+            end, 'Toggle Inlay Hints')
           end
         end,
       })
@@ -715,7 +724,7 @@ require('lazy').setup({
           require('conform').format { async = true, lsp_fallback = true }
         end,
         mode = '',
-        desc = '[F]ormat buffer',
+        desc = 'Format buffer',
       },
     },
     opts = {
@@ -764,14 +773,17 @@ require('lazy').setup({
           -- `friendly-snippets` contains a variety of premade snippets.
           --    See the README about individual language/framework/plugin snippets:
           --    https://github.com/rafamadriz/friendly-snippets
-          {
-            'rafamadriz/friendly-snippets',
-            config = function()
-              require('luasnip.loaders.from_vscode').lazy_load()
-              require('luasnip.loaders.from_vscode').load { paths = '~/AppData/Local/nvim/snippets/' }
-            end,
-          },
+          -- {
+          --   'rafamadriz/friendly-snippets',
+          --   config = function()
+          --     require('luasnip.loaders.from_vscode').lazy_load()
+          --     require('luasnip.loaders.from_vscode').load { paths = '~/AppData/Local/nvim/snippets/' }
+          --   end,
+          -- },
         },
+        config = function()
+          require('luasnip.loaders.from_vscode').lazy_load { paths = '~/AppData/Local/nvim/snippets/' }
+        end,
       },
       'saadparwaiz1/cmp_luasnip',
 
