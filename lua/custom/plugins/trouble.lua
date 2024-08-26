@@ -3,6 +3,7 @@ return {
     'folke/trouble.nvim',
     opts = {}, -- for default options, refer to the configuration section for custom setup.
     cmd = 'Trouble',
+    event = 'VeryLazy',
     keys = {
       {
         '<leader>xx',
@@ -11,7 +12,7 @@ return {
       },
       {
         '<leader>xX',
-        '<cmd>Trouble diagnostics toggle pinned=true win.relative=win win.position=left filter.buf=0<cr>',
+        '<cmd>Trouble diagnostics toggle pinned=true win.relative=win win.position=left filter.buf=0 open_no_results=true<cr>',
         desc = 'Buffer Diagnostics (Trouble)',
       },
       {

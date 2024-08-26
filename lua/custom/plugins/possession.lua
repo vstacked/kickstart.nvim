@@ -1,6 +1,7 @@
 return {
   {
     'gennaro-tedesco/nvim-possession',
+    event = 'VeryLazy',
     dependencies = {
       'ibhagwan/fzf-lua',
     },

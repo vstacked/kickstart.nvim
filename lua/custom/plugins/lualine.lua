@@ -2,6 +2,7 @@ return {
   {
     'nvim-lualine/lualine.nvim',
     dependencies = { 'nvim-tree/nvim-web-devicons' },
+    event = 'VeryLazy',
     config = function()
       local function selectionCount()
         local isVisualMode = vim.fn.mode():find '[Vv]'
