@@ -432,9 +432,22 @@ require('lazy').setup({
           },
           sorting_strategy = 'ascending',
           path_display = function(_, path)
-            local tail = require('telescope.utils').path_tail(path)
-            print(path)
-            return string.format('%s (%s)', tail, path), { { { 1, #tail }, 'Constant' } }
+            local cwd = vim.fn.getcwd()
+            cwd = cwd:sub(1, 1):lower() .. cwd:sub(2)
+
+            -- Convert backslashes to forward slashes
+            local path_convert = path:gsub('/', '\\')
+
+            -- Remove CWD from the path
+            if cwd then
+              cwd = cwd:gsub('/', '\\')
+              -- Check if the path starts with the CWD and remove it
+              if path_convert:sub(1, #cwd) == cwd then
+                path_convert = path_convert:sub(#cwd + 1)
+              end
+            end
+
+            return path_convert
           end,
           --   mappings = {
           --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
@@ -463,7 +476,9 @@ require('lazy').setup({
       vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'Search Diagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'Search Resume' })
       vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', builtin.buffers, { desc = '[ ] Find existing buffers' })
+      vim.keymap.set('n', '<leader><leader>', function()
+        builtin.buffers { sort_mru = true }
+      end, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
       vim.keymap.set('n', '<leader>/', function()
