@@ -431,7 +431,11 @@ require('lazy').setup({
             },
           },
           sorting_strategy = 'ascending',
-          path_display = { 'tail' },
+          path_display = function(_, path)
+            local tail = require('telescope.utils').path_tail(path)
+            print(path)
+            return string.format('%s (%s)', tail, path), { { { 1, #tail }, 'Constant' } }
+          end,
           --   mappings = {
           --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           --   },
