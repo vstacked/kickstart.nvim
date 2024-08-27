@@ -7,7 +7,7 @@ return {
     keys = {
       {
         '<leader>xx',
-        '<cmd>Trouble diagnostics toggle<cr>',
+        '<cmd>Trouble diagnostics toggle pinned=true win.relative=win win.position=left open_no_results=true<cr>',
         desc = 'Diagnostics (Trouble)',
       },
       {
@@ -43,7 +43,23 @@ return {
     },
     config = function()
       local trouble = require 'trouble'
-      trouble.setup()
+      trouble.setup {
+        icons = {
+          indent = {
+            middle = ' ',
+            last = ' ',
+            top = ' ',
+            ws = '│  ',
+          },
+        },
+        modes = {
+          diagnostics = {
+            groups = {
+              { 'filename', format = '{file_icon} {basename:Title} {count}' },
+            },
+          },
+        },
+      }
 
       -- local actions = require 'telescope.actions'
       -- local open_with_trouble = require('trouble.sources.telescope').open
