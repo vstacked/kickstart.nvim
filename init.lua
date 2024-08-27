@@ -180,9 +180,14 @@ vim.keymap.set('n', '<Leader>Q', '<Cmd>qa<CR>', { desc = 'Quit All' })
 vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move Up' })
 vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move Down' })
 
+vim.keymap.set('n', '<C-Up>', '<Cmd>resize -2<CR>', { desc = 'Resize split up' })
+vim.keymap.set('n', '<C-Down>', '<Cmd>resize +2<CR>', { desc = 'Resize split down' })
+vim.keymap.set('n', '<C-Left>', '<Cmd>vertical resize -2<CR>', { desc = 'Resize split left' })
+vim.keymap.set('n', '<C-Right>', '<Cmd>vertical resize +2<CR>', { desc = 'Resize split right' })
+
 -- ThePrimeagen
 -- Paste without overwriting register and keep position
-vim.keymap.set('x', '<Leader>P', [["_dP]], { desc = 'Paste w/o overwriting' })
+vim.keymap.set('x', '<Leader>p', [["_dP]], { desc = 'Paste w/o overwriting' })
 
 vim.keymap.set('i', 'jj', '<Esc>', { desc = 'Esc' })
 

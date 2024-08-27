@@ -176,12 +176,17 @@ return {
         },
       }
 
+      local possession = require 'nvim-possession'
+      function possessionList()
+        possession.list()
+      end
+
       local buttons = {
         type = 'group',
         val = {
           { type = 'text', val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
-          dashboard.button('e', '  New file', '<cmd>ene<CR>'),
+          dashboard.button('e', '󱑜  Possession', '<cmd>lua possessionList()<CR>'),
           dashboard.button('SPC s f', '󰈞  Find file'),
           dashboard.button('SPC s g', '󰊄  Live grep'),
           -- dashboard.button('c', '  Configuration', "<cmd>cd stdpath('config')<CR>"),
