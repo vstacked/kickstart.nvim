@@ -186,7 +186,7 @@ return {
         val = {
           { type = 'text', val = 'Quick links', opts = { hl = 'SpecialComment', position = 'center' } },
           { type = 'padding', val = 1 },
-          dashboard.button('e', '󱑜  Possession', '<cmd>lua possessionList()<CR>'),
+          dashboard.button('p', '󱑜  Possession', '<cmd>lua possessionList()<CR>'),
           dashboard.button('SPC s f', '󰈞  Find file'),
           dashboard.button('SPC s g', '󰊄  Live grep'),
           -- dashboard.button('c', '  Configuration', "<cmd>cd stdpath('config')<CR>"),
