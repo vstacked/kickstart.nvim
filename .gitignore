@@ -3,7 +3,8 @@ test.sh
 .luarc.json
 nvim
 
-snippets/tr-snippet.json
+!snippets/package.json
+snippets/*
 
 spell/
 # lazy-lock.json

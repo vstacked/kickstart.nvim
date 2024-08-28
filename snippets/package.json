@@ -12,7 +12,25 @@
           "javascript",
           "javascriptreact"
         ],
-        "path": "./tr-snippet.json"
+        "path": "./typescript-basics.json"
+      },
+      {
+        "language": [
+          "typescript",
+          "typescriptreact",
+          "javascript",
+          "javascriptreact"
+        ],
+        "path": "./vscode-react-javascript.json"
+      },
+      {
+        "language": [
+          "typescript",
+          "typescriptreact",
+          "javascript",
+          "javascriptreact"
+        ],
+        "path": "./vstacked.json"
       }
     ]
   }

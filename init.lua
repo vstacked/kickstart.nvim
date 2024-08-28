@@ -203,6 +203,20 @@ for name, icon in pairs(symbols) do
   local hl = 'DiagnosticSign' .. name
   vim.fn.sign_define(hl, { text = icon, numhl = hl, texthl = hl })
 end
+
+-- https://www.reddit.com/r/neovim/comments/16qcncm/comment/k1w8jgj/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+-- Add border to the diagnostic popup window
+vim.diagnostic.config {
+  underline = true,
+  update_in_insert = false,
+  virtual_text = {
+    spacing = 4,
+    source = 'if_many',
+    prefix = '●',
+  },
+  severity_sort = true,
+  float = { border = 'rounded' },
+}
 -- vstacked
 
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -363,6 +377,11 @@ require('lazy').setup({
         { '<leader>gh', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
         { '<leader>gt', group = 'Toggle', icon = { icon = '󰨙', color = 'red' } },
         { '<leader>p', group = 'Possession', icon = { icon = '󱑜', color = 'azure' } },
+        {
+          mode = { 'v' },
+          { '<leader>h', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
+          { '<leader>s', group = 'Search' },
+        },
       }
     end,
   },
@@ -465,27 +484,52 @@ require('lazy').setup({
       pcall(require('telescope').load_extension, 'fzf')
       pcall(require('telescope').load_extension, 'ui-select')
 
+      local get_selection = function()
+        local mode = vim.fn.mode()
+        local selection = ''
+
+        if mode == 'n' then
+          selection = ''
+        else
+          -- https://www.reddit.com/r/neovim/comments/1dpma3y/how_to_put_selected_text_in_visual_mode_into/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button
+          vim.cmd.normal { '"zy', bang = true }
+          selection = vim.fn.getreg 'z'
+        end
+        return selection
+      end
+
       -- See `:help telescope.builtin`
       local builtin = require 'telescope.builtin'
       vim.keymap.set('n', '<leader>sh', builtin.help_tags, { desc = 'Search Help' })
       vim.keymap.set('n', '<leader>sk', builtin.keymaps, { desc = 'Search Keymaps' })
-      vim.keymap.set('n', '<leader>sf', builtin.find_files, { desc = 'Search Files' })
+      vim.keymap.set({ 'n', 'x' }, '<leader>sf', function()
+        builtin.find_files { default_text = get_selection() }
+      end, { desc = 'Search Files' })
       vim.keymap.set('n', '<leader>ss', builtin.builtin, { desc = 'Search Select Telescope' })
-      vim.keymap.set('n', '<leader>sw', builtin.grep_string, { desc = 'Search current Word' })
-      vim.keymap.set('n', '<leader>sg', builtin.live_grep, { desc = 'Search by Grep' })
-      vim.keymap.set('n', '<leader>sd', builtin.diagnostics, { desc = 'Search Diagnostics' })
+      vim.keymap.set({ 'n', 'x' }, '<leader>sw', function()
+        builtin.grep_string { default_text = get_selection() }
+      end, { desc = 'Search current Word' })
+      vim.keymap.set({ 'n', 'x' }, '<leader>sg', function()
+        builtin.live_grep { default_text = get_selection() }
+      end, { desc = 'Search by Grep' })
+      vim.keymap.set({ 'n', 'x' }, '<leader>sd', function()
+        builtin.diagnostics { default_text = get_selection() }
+      end, { desc = 'Search Diagnostics' })
       vim.keymap.set('n', '<leader>sr', builtin.resume, { desc = 'Search Resume' })
-      vim.keymap.set('n', '<leader>s.', builtin.oldfiles, { desc = 'Search Recent Files ("." for repeat)' })
-      vim.keymap.set('n', '<leader><leader>', function()
-        builtin.buffers { sort_mru = true }
+      vim.keymap.set({ 'n', 'x' }, '<leader>s.', function()
+        builtin.oldfiles { default_text = get_selection() }
+      end, { desc = 'Search Recent Files ("." for repeat)' })
+      vim.keymap.set({ 'n', 'x' }, '<leader><leader>', function()
+        builtin.buffers { sort_mru = true, default_text = get_selection() }
       end, { desc = '[ ] Find existing buffers' })
 
       -- Slightly advanced example of overriding default behavior and theme
-      vim.keymap.set('n', '<leader>/', function()
+      vim.keymap.set({ 'n', 'x' }, '<leader>/', function()
         -- You can pass additional configuration to Telescope to change the theme, layout, etc.
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown {
           winblend = 10,
           previewer = false,
+          default_text = get_selection(),
         })
       end, { desc = '[/] Fuzzily search in current buffer' })
 
@@ -776,6 +820,14 @@ require('lazy').setup({
             -- certain features of an LSP (for example, turning off formatting for tsserver)
             server.capabilities = vim.tbl_deep_extend('force', {}, capabilities, server.capabilities or {})
             require('lspconfig')[server_name].setup(server)
+
+            --Enable (broadcasting) snippet capability for completion
+            local capabilities_html = vim.lsp.protocol.make_client_capabilities()
+            capabilities_html.textDocument.completion.completionItem.snippetSupport = true
+
+            require('lspconfig').html.setup {
+              capabilities = capabilities_html,
+            }
           end,
         },
         tailwindcss = function(_, opts)
@@ -939,6 +991,10 @@ require('lazy').setup({
       }
 
       cmp.setup {
+        window = {
+          completion = cmp.config.window.bordered(),
+          documentation = cmp.config.window.bordered(),
+        },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
