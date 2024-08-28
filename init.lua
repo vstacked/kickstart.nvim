@@ -177,8 +177,8 @@ vim.keymap.set('n', '<Leader>cw', '<Cmd>:noautocmd w<CR>', { desc = 'Save' })
 
 vim.keymap.set('n', '<Leader>Q', '<Cmd>qa<CR>', { desc = 'Quit All' })
 
-vim.keymap.set('n', '<A-k>', ':m .-2<CR>==', { desc = 'Move Up' })
-vim.keymap.set('n', '<A-j>', ':m .+1<CR>==', { desc = 'Move Down' })
+vim.keymap.set({ 'n', 'x' }, '<A-k>', ':m .-2<CR>==', { desc = 'Move Up' })
+vim.keymap.set({ 'n', 'x' }, '<A-j>', ':m .+1<CR>==', { desc = 'Move Down' })
 
 vim.keymap.set('n', '<C-Up>', '<Cmd>resize -2<CR>', { desc = 'Resize split up' })
 vim.keymap.set('n', '<C-Down>', '<Cmd>resize +2<CR>', { desc = 'Resize split down' })
@@ -923,6 +923,7 @@ require('lazy').setup({
       'hrsh7th/cmp-path',
 
       { 'roobert/tailwindcss-colorizer-cmp.nvim', opts = {} },
+      { 'petertriho/cmp-git', opts = {} },
     },
     config = function()
       -- See `:help cmp`
@@ -1006,6 +1007,7 @@ require('lazy').setup({
           { name = 'nvim_lsp' },
           { name = 'luasnip' },
           { name = 'path' },
+          { name = 'git' },
         },
       }
     end,
@@ -1089,6 +1091,11 @@ require('lazy').setup({
         'vimdoc',
         'typescript',
         'json5',
+        'git_config',
+        'gitcommit',
+        'git_rebase',
+        'gitignore',
+        'gitattributes',
       },
       -- Autoinstall languages that are not installed
       auto_install = true,
