@@ -796,6 +796,10 @@ require('lazy').setup({
           filetypes_include = {},
           -- to fully override the default_config, change the below
           -- filetypes = {}
+          root_dir = function(fname)
+            local root_pattern = require('lspconfig').util.root_pattern('tailwind.config.cjs', 'tailwind.config.js', 'postcss.config.js')
+            return root_pattern(fname)
+          end,
         },
         --
 
