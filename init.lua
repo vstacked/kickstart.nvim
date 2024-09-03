@@ -201,6 +201,8 @@ vim.o.textwidth = 80
 
 vim.opt.fillchars = { eob = ' ' }
 
+vim.diagnostic.disable()
+
 local symbols = { Error = '󰅚 ', Info = '󰋽 ', Hint = '󰌶 ', Warn = '󰀪 ' }
 for name, icon in pairs(symbols) do
   local hl = 'DiagnosticSign' .. name
@@ -290,7 +292,7 @@ vim.api.nvim_create_autocmd('CursorHold', {
 keyset('n', '<leader>crn', '<Plug>(coc-rename)', { silent = true })
 
 -- Formatting selected code
-keyset('x', '<leader>f', '<Plug>(coc-format-selected)', { silent = true })
+keyset('x', '<leader>f', '<Plug>(coc-format-selected)', { silent = true, desc = 'Format Selected' })
 
 vim.api.nvim_create_user_command('Format', "call CocAction('format')", {})
 keyset('n', '<leader>f', '<CMD>:Format<CR>', { silent = true })
@@ -311,26 +313,38 @@ vim.api.nvim_create_autocmd('User', {
   desc = 'Update signature help on jump placeholder',
 })
 
+-- Utility function to merge two tables
+local function merge_tables(t1, t2)
+  local t = {}
+  for k, v in pairs(t1) do
+    t[k] = v
+  end
+  for k, v in pairs(t2) do
+    t[k] = v
+  end
+  return t
+end
+
 -- Apply codeAction to the selected region
 -- Example: `<leader>aap` for current paragraph
 local opts = { silent = true, nowait = true }
-keyset('x', '<leader>ca', '<Plug>(coc-codeaction-selected)', opts)
-keyset('n', '<leader>ca', '<Plug>(coc-codeaction-selected)', opts)
+keyset('x', '<leader>ca', '<Plug>(coc-codeaction-selected)', merge_tables({ desc = 'CodeAction Selected' }, opts))
+keyset('n', '<leader>ca', '<Plug>(coc-codeaction-selected)', merge_tables({ desc = 'CodeAction Selected' }, opts))
 
 -- Remap keys for apply code actions at the cursor position.
-keyset('n', '<leader>cc', '<Plug>(coc-codeaction-cursor)', opts)
+keyset('n', '<leader>cc', '<Plug>(coc-codeaction-cursor)', merge_tables({ desc = 'CodeAction Cursor' }, opts))
 -- Remap keys for apply source code actions for current file.
-keyset('n', '<leader>cs', '<Plug>(coc-codeaction-source)', opts)
+keyset('n', '<leader>cs', '<Plug>(coc-codeaction-source)', merge_tables({ desc = 'CodeAction Source' }, opts))
 -- Apply the most preferred quickfix action on the current line.
-keyset('n', '<leader>cf', '<Plug>(coc-fix-current)', opts)
+keyset('n', '<leader>cf', '<Plug>(coc-fix-current)', merge_tables({ desc = 'Fix Current' }, opts))
 
 -- Remap keys for apply refactor code actions.
-keyset('n', '<leader>cre', '<Plug>(coc-codeaction-refactor)', { silent = true })
-keyset('x', '<leader>cr', '<Plug>(coc-codeaction-refactor-selected)', { silent = true })
-keyset('n', '<leader>cr', '<Plug>(coc-codeaction-refactor-selected)', { silent = true })
+keyset('n', '<leader>cre', '<Plug>(coc-codeaction-refactor)', { silent = true, desc = 'CodeAction Refactor' })
+keyset('x', '<leader>cr', '<Plug>(coc-codeaction-refactor-selected)', { silent = true, desc = 'CodeAction Refactor Selected' })
+keyset('n', '<leader>cr', '<Plug>(coc-codeaction-refactor-selected)', { silent = true, desc = 'CodeAction Refactor Selected' })
 
 -- Run the Code Lens actions on the current line
-keyset('n', '<leader>cl', '<Plug>(coc-codelens-action)', opts)
+keyset('n', '<leader>cl', '<Plug>(coc-codelens-action)', merge_tables({ desc = 'Codelens Action' }, opts))
 
 -- Map function and class text objects
 -- NOTE: Requires 'textDocument.documentSymbol' support from the language server
@@ -366,7 +380,7 @@ keyset('x', '<C-s>', '<Plug>(coc-range-select)', { silent = true })
 
 -- Add `:OR` command for organize imports of the current buffer
 vim.api.nvim_create_user_command('OR', "call CocActionAsync('runCommand', 'editor.action.organizeImport')", {})
-keyset('n', '<leader>co', '<CMD>:OR<CR>', opts)
+keyset('n', '<leader>co', '<CMD>:OR<CR>', merge_tables({ desc = 'Organize Imports' }, opts))
 
 -- Add (Neo)Vim's native statusline support
 -- NOTE: Please see `:h coc-status` for integrations with external plugins that
@@ -378,21 +392,21 @@ vim.opt.statusline:prepend "%{coc#status()}%{get(b:,'coc_current_function','')}"
 ---@diagnostic disable-next-line: redefined-local
 local opts = { silent = true, nowait = true }
 -- Show all diagnostics
-keyset('n', '<space>cd', ':<C-u>CocList diagnostics<cr>', opts)
+keyset('n', '<space>cd', ':<C-u>CocList diagnostics<cr>', merge_tables({ desc = 'Diagnostics' }, opts))
 -- Manage extensions
-keyset('n', '<space>ve', ':<C-u>CocList extensions<cr>', opts)
+keyset('n', '<space>ve', ':<C-u>CocList extensions<cr>', merge_tables({ desc = 'Extensions' }, opts))
 -- Show commands
-keyset('n', '<space>vc', ':<C-u>CocList commands<cr>', opts)
+keyset('n', '<space>vc', ':<C-u>CocList commands<cr>', merge_tables({ desc = 'Commands' }, opts))
 -- Find symbol of current document
-keyset('n', '<space>vo', ':<C-u>CocList outline<cr>', opts)
+keyset('n', '<space>vo', ':<C-u>CocList outline<cr>', merge_tables({ desc = 'Outline' }, opts))
 -- Search workspace symbols
-keyset('n', '<space>vs', ':<C-u>CocList -I symbols<cr>', opts)
+keyset('n', '<space>vs', ':<C-u>CocList -I symbols<cr>', merge_tables({ desc = 'Symbols' }, opts))
 -- Do default action for next item
-keyset('n', '<space>vj', ':<C-u>CocNext<cr>', opts)
+keyset('n', '<space>vj', ':<C-u>CocNext<cr>', merge_tables({ desc = 'Next' }, opts))
 -- Do default action for previous item
-keyset('n', '<space>vk', ':<C-u>CocPrev<cr>', opts)
+keyset('n', '<space>vk', ':<C-u>CocPrev<cr>', merge_tables({ desc = 'Prev' }, opts))
 -- Resume latest coc list
-keyset('n', '<space>vp', ':<C-u>CocListResume<cr>', opts)
+keyset('n', '<space>vp', ':<C-u>CocListResume<cr>', merge_tables({ desc = 'Resume List' }, opts))
 -- vstacked
 
 -- Clear highlights on search when pressing <Esc> in normal mode
@@ -400,7 +414,7 @@ keyset('n', '<space>vp', ':<C-u>CocListResume<cr>', opts)
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- Diagnostic keymaps
-vim.keymap.set('n', '<leader>xq', vim.diagnostic.setloclist, { desc = 'Open diagnostic Quickfix list' })
+-- vim.keymap.set('n', '<leader>xq', vim.diagnostic.setloclist, { desc = 'Open diagnostic Quickfix list' })
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -545,11 +559,11 @@ require('lazy').setup({
         { '<leader>c', group = 'Code' },
         { '<leader>s', group = 'Search' },
         { '<leader>g', group = 'Git', mode = { 'n', 'v' } },
+        { '<leader>f', icon = { icon = '󰉼', color = 'yellow' } },
         { '<leader>e', icon = { icon = '', color = 'azure' } },
         { '<leader>H', icon = { icon = '', color = 'azure' } },
-        { '<leader>m', icon = { icon = '', color = 'green' } },
         { '<leader>W', icon = { icon = '󰽄', color = 'grey' } },
-        { '<leader>x', group = 'Trouble', icon = { icon = '', color = 'cyan' } },
+        { '<leader>v', group = 'CoC', icon = { icon = '', color = 'cyan' } },
         { '<leader>gh', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
         { '<leader>gt', group = 'Toggle', icon = { icon = '󰨙', color = 'red' } },
         { '<leader>p', group = 'Possession', icon = { icon = '󱑜', color = 'azure' } },
@@ -557,6 +571,8 @@ require('lazy').setup({
           mode = { 'v' },
           { '<leader>h', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
           { '<leader>s', group = 'Search' },
+          { '<leader>f', icon = { icon = '󰉼', color = 'yellow' } },
+          { '<leader>c', group = 'Code' },
         },
       }
     end,
