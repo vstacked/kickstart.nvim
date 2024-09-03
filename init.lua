@@ -167,6 +167,9 @@ vim.keymap.set('n', '<S-Tab>', '<cmd>bprevious<cr>', { desc = 'Prev Buffer' })
 vim.keymap.set('n', 'u', '<Cmd>undo<CR>', { desc = 'Undo' })
 vim.keymap.set('n', 'U', '<Cmd>redo<CR>', { desc = 'Redo' })
 
+vim.keymap.set('n', ']q', '<Cmd>:cnext<CR>', { desc = 'Undo' })
+vim.keymap.set('n', '[q', '<Cmd>:cprev<CR>', { desc = 'Redo' })
+
 vim.keymap.set('n', '<Leader>e', '<Cmd>Oil<CR>', { desc = 'Oil' })
 
 vim.keymap.set('n', '<Leader>H', '<Cmd>Alpha<CR>', { desc = 'Home' })
