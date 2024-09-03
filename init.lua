@@ -444,6 +444,17 @@ require('lazy').setup({
         --  All the info you're looking for is in `:help telescope.setup()`
         --
         defaults = {
+          vimgrep_arguments = {
+            'rg',
+            '--color=never',
+            '--no-heading',
+            '--with-filename',
+            '--line-number',
+            '--column',
+            '--smart-case',
+            '-u', -- thats the new thing
+          },
+          file_ignore_patterns = { 'node_modules', '.git', '.venv' },
           layout_config = {
             horizontal = {
               prompt_position = 'top',
@@ -472,11 +483,22 @@ require('lazy').setup({
           --     i = { ['<c-enter>'] = 'to_fuzzy_refine' },
           --   },
         },
-        -- pickers = {}
+        pickers = {
+          live_grep = {
+            additional_args = function(_)
+              return { '--hidden' }
+            end,
+          },
+          find_files = {
+            hidden = true,
+            no_ignore = true,
+          },
+        },
         extensions = {
           ['ui-select'] = {
             require('telescope.themes').get_dropdown(),
           },
+          'fzf',
         },
       }
 
