@@ -814,6 +814,10 @@ require('lazy').setup({
               },
               -- You can toggle below to ignore Lua_LS's noisy `missing-fields` warnings
               -- diagnostics = { disable = { 'missing-fields' } },
+              workspace = {
+                maxPreload = 10000,
+                preloadFileSize = 1000,
+              },
             },
           },
         },
