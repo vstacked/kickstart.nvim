@@ -220,6 +220,12 @@ vim.diagnostic.config {
   severity_sort = true,
   float = { border = 'rounded' },
 }
+
+-- https://github.com/neovim/nvim-lspconfig/issues/127#issuecomment-748327693
+vim.lsp.handlers['textDocument/publishDiagnostics'] = vim.lsp.with(vim.lsp.diagnostic.on_publish_diagnostics, {
+  -- delay update diagnostics
+  update_in_insert = false,
+})
 -- vstacked
 
 -- Clear highlights on search when pressing <Esc> in normal mode
