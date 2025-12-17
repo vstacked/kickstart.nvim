@@ -93,6 +93,7 @@ vim.g.maplocalleader = ' '
 -- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
+vim.opt.backupcopy = 'yes'
 -- [[ Setting options ]]
 -- See `:help vim.opt`
 -- NOTE: You can change these options as you wish!
@@ -380,7 +381,6 @@ require('lazy').setup({
         { '<leader>g', group = 'Git', mode = { 'n', 'v' } },
         { '<leader>e', icon = { icon = '', color = 'azure' } },
         { '<leader>H', icon = { icon = '', color = 'azure' } },
-        { '<leader>m', icon = { icon = '', color = 'green' } },
         { '<leader>W', icon = { icon = '󰽄', color = 'grey' } },
         { '<leader>x', group = 'Trouble', icon = { icon = '', color = 'cyan' } },
         { '<leader>gh', group = 'Hunk', icon = { icon = '', color = 'cyan' } },
